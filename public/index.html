@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Firebase1</title>
+
+  <link rel="stylesheet" href="/css/b4/bootstrap.css">
+  <link rel="stylesheet" href="/css/fa/css/all.min.css">
+
+  <style>
+    #drop_zone {
+      height: 100%;
+      width: 100%;
+      background-color: gray;
+    }
+  </style>
+
+</head>
+<body>
+
+  <section id="navb_zone" class="card border-0 rounded-0" style="height: 50px; width: 100%;">
+
+  </section>
+
+  <section id="medium_zone" class="container pt-2">
+    <div class="row ">
+      <div class="col-lg-8 mx-auto">
+        <section class="card p-3">
+          <form id="form_zone" class="needs-validation" enctype="multipart/form-data">
+
+            <div class="card border-light p-3 m-1" style="height: 200px;">
+
+              <div id="drop_zone" ondrop="dropHandler(event);" ondragover="dragOverHandler(event);">
+                <div class="card" style="display: flex; justify-content: center; text-align: center; height: 100%; background-color: transparent;">
+                  Arrastra y suelta uno o más archivos a esta zona ...
+                  <i class="fas fa-cloud-download-alt pt-2" style="font-size: 100px;"></i>
+                </div>
+              </div>
+
+            </div>
+            <div class="card border-light p-3 m-1 text-center">
+              <label for="basic-url">o Seleccione los archivos pulsando el boton (Maximo 5): </label>
+              <div class="input-group ">
+                <div class="input-group-prepend">
+                  <span class="input-group-text"><i class="far fa-file-pdf"></i></span>
+                </div>
+                <div class="custom-file">
+                  <input type="file" class="form-control custom-file-input" id="seld_zone" accept=".pdf" multiple>
+                  <label class="custom-file-label text-left" for="seld_zone">Choose file</label>
+                </div>
+              </div>
+            </div>
+            <div id="list_zone" class="card border-light p-3 m-1"">
+              <table class="table">
+                <thead>
+                  <tr>
+                    <th scope="col">#</th>
+                    <th scope="col">File</th>
+                    <th scope="col">Qty</th>
+                  </tr>
+                </thead>
+                <tbody id="table_zone">
+                  <!--
+                  <tr>
+                    <th scope="row">1</th>
+                    <td>Mark</td>
+                    <td>Otto</td>
+                  </tr>
+                  -->
+                </tbody>
+              </table>
+            </div>
+            <div class="card border-light p-3 m-1">
+              <button class="btn btn-outline-light btn-block btn-lg" type="submit">Generate code</button>
+            </div>
+
+          </form>
+        </section>
+      </div>
+    </div>
+  </section>
+
+  <section id="modal_zone" class="modal fade"  tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+      <div class="modal-content">
+      </div>
+    </div>
+  </section>
+
+
+</body>
+<script src="/js/bootstrap-native-v4.min.js"></script>
+<script>
+
+  var myfiles = [];
+  var modal_zone = new Modal(document.getElementById('modal_zone'));
+
+  function callmodal(par1,par2) {
+    modal_zone = new Modal(document.getElementById('modal_zone'));
+    let modal_str = "";
+    let btn_str = "";
+
+    if(par2)
+      btn_str = '<button type="button" class="btn btn-outline-success btn-block" data-dismiss="modal">OK</button>';
+    else
+      btn_str = '<button type="button" class="btn btn-outline-danger btn-block" data-dismiss="modal">Close</button>';
+    
+    modal_str += '\
+      <div class="modal-header text-center">\
+        <h5 class="modal-title" id="exampleModalCenterTitle">Mensaje de mycajero.wyx</h5>\
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">\
+          <span aria-hidden="true">&times;</span>\
+        </button>\
+      </div>\
+      <div class="modal-body">'+ par1 +'</div>\
+      <div class="modal-footer">' + btn_str +' </div>';
+    modal_zone.update();
+    modal_zone.setContent(modal_str);
+    modal_zone.show();
+    return null;
+  }
+
+  function dragOverHandler(ev) {
+    document.getElementById('drop_zone').style.backgroundColor = "white";
+    document.getElementById('drop_zone').style.color = "rgb(48,48,48)"
+    ev.preventDefault();
+  }
+
+  function removeDragData(ev) {
+    console.log('Removing drag data')
+    if (ev.dataTransfer.items) {
+      // Use DataTransferItemList interface to remove the drag data
+      ev.dataTransfer.items.clear();
+    } else {
+      // Use DataTransfer interface to remove the drag data
+      ev.dataTransfer.clearData();
+    }
+  }
+
+  function dropHandler(ev) {
+    ev.preventDefault();
+    myfiles = [];
+    let tablestring = "";
+
+    if ((ev.dataTransfer.items) && (ev.dataTransfer.items.length <= 5)) {
+      for (let i = 0; i < ev.dataTransfer.items.length; i++) {
+        if (ev.dataTransfer.items[i].kind === 'file') {
+          let file = ev.dataTransfer.items[i].getAsFile();
+          if(file.type == 'application/pdf'){
+            if(file.size < 5500000 ){
+              myfiles.push(file);
+              //console.log('... file[' + i + '].name = ' + file.name);
+              tablestring += '\
+                <tr>\
+                  <th scope="row" style="width: 20%;">'+ (i+1) +'</th>\
+                  <td style="width: 50%;">'+ file.name +'</td>\
+                  <td style="width: 20%;"><input type="number" class="form-control text-right" min="1" value="1" id="copy'+i+'"></td>\
+                </tr>';
+            }else{
+              i = ev.dataTransfer.items.length;
+              myfiles = [];
+              tablestring = "";
+              callmodal('Un archivo supera los 5 Megas',false);
+            }
+
+          }else{
+            i = ev.dataTransfer.items.length;
+            myfiles = [];
+            tablestring = "";
+            callmodal('Solo se admiten archivos PDF',false);
+          }
+        }
+      }
+    } else {
+      myfiles = [];
+      tablestring = "";
+      callmodal('No exceda los 5 archivos',false);
+      /*for (let i = 0; i < ev.dataTransfer.files.length; i++) {
+        console.log('... file[' + i + '].name = ' + ev.dataTransfer.files[i].name);
+      }*/
+    } 
+    document.getElementById('table_zone').innerHTML = tablestring;
+    document.getElementById('drop_zone').style.backgroundColor = "gray";
+    document.getElementById('drop_zone').style.color = "white";
+    // Pass event to removeDragData for cleanup
+    //removeDragData(ev);
+  }
+
+  document.getElementById('drop_zone').addEventListener('dragleave',function (e) {
+    document.getElementById('drop_zone').style.backgroundColor = "gray";
+    document.getElementById('drop_zone').style.color = "white";
+  });
+
+  document.getElementById('seld_zone').addEventListener('change',function (e) {
+    //console.log(e);
+    let tablestring = "";
+    myfiles = [];
+    if((e.srcElement.files.length>0)&&(e.srcElement.files.length<=5)){  
+      for (let i = 0; i < e.srcElement.files.length; i++) {
+        if(e.srcElement.files[i].type == 'application/pdf'){
+          if(e.srcElement.files[i].size < 5500000 ){
+            myfiles.push(e.srcElement.files[i]);
+            tablestring += '\
+              <tr>\
+                <th scope="row" style="width: 20%;">'+ (i+1) +'</th>\
+                <td style="width: 50%;">'+ e.srcElement.files[i].name +'</td>\
+                <td style="width: 20%;"><input type="number" class="form-control text-right" min="0" value="1" id="copy'+i+'"></td>\
+              </tr>';
+          }else{
+            i = e.srcElement.files.length;
+            myfiles = [];
+            tablestring = "";
+            callmodal('Un archivo supera los 5 Megas',false);
+          }
+
+        }else{
+          i = e.srcElement.files.length;
+          myfiles = [];
+          tablestring = "";
+          callmodal('Solo se admiten archivos PDF',false);
+        }
+      }
+    }else{
+      myfiles = [];
+      tablestring = "";
+      callmodal('No exceda los 5 archivos',false);
+    }
+    document.getElementById('table_zone').innerHTML = tablestring;
+  });
+
+  document.getElementById('form_zone').addEventListener('submit',function (e) {
+    e.preventDefault();
+    if((myfiles.length < 5)&&(myfiles.length > 0)){
+
+      const formData = new FormData();
+      for (let i = 0; i < myfiles.length; i++) {
+        formData.append('fieldname[]', myfiles[i]);
+        formData.append('fieldqty[]', document.getElementById('copy'+i).value);
+      };    
+      callmodal("Archivos enviandose, espere...",true);
+      
+      fetch('/upload', {
+        method: 'POST',                                     
+        body: formData
+        }).then(response => {return response.json()}).catch(err => {console.log(err);})
+        .then(res => {    
+          //console.log(res);
+          if(res.hasOwnProperty('status')){
+            if(res['status']){
+              myfiles = [];
+              document.getElementById('table_zone').innerHTML = "";
+              const message = '\
+                <div>\
+                  <span>Sus archivos ya estan en el cajero, utilize la clave: </span>\
+                  <span class="font-italic"><a href="#"> '+ res['clave'] +' <a/></span> \
+                  <span> para acceder a ellos </span>\
+                </div>'
+              callmodal(message,true);
+            }else{
+              callmodal("No se pudo almacenar la informacion en el cajero, contacte al 111-111-111 para mas informacion",false);
+            }
+          }                                  
+        });
+        
+      
+    }else if(myfiles.length > 5){
+      callmodal('No exceda los 5 archivos',false);
+    }else if(myfiles.length <= 0){
+      callmodal('No a seleccionado archivos',false);
+    }else{
+      callmodal('error general',false);
+    }
+    
+  });
+
+</script>
+</html>

@@ -1,0 +1,25 @@
+{
+  "name": "firebase1",
+  "description": "Node.js Google Cloud Storage sample for Google App Engine",
+  "scripts": {
+    "start": "node index.js",
+    "dev1": "nodemon index.js",
+    "test": "mocha system-test/*.test.js --exit --timeout=30000"
+  },
+  "engines": {
+    "node": ">=8.0.0"
+  },
+  "dependencies": {
+    "body-parser": "^1.18.3",
+    "dotenv": "^8.2.0",
+    "express": "^4.16.4",
+    "express-session": "^1.17.1",
+    "firebase-admin": "^8.12.1",
+    "fs-extra": "^9.0.0",
+    "moment": "^2.26.0",
+    "multer": "^1.4.1"
+  },
+  "devDependencies": {
+    "nodemon": "^2.0.4"
+  }
+}
