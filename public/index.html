@@ -3,44 +3,39 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Firebase1</title>
+  <title>Mycajero.wyx remoto</title>
 
+  <!--local CDNs-->
   <link rel="stylesheet" href="/css/b4/bootstrap.css">
   <link rel="stylesheet" href="/css/fa/css/all.min.css">
-
-  <style>
-    #drop_zone {
-      height: 100%;
-      width: 100%;
-      background-color: gray;
-    }
-  </style>
+  <link rel="stylesheet" href="/css/app.css">
 
 </head>
 <body>
-
+  <!--Navbar-->
   <section id="navb_zone" class="card border-0 rounded-0" style="height: 50px; width: 100%;">
 
   </section>
-
-  <section id="medium_zone" class="container pt-2">
+  <!--Main form-->
+  <section id="medium_zone" class="container pt-3">
     <div class="row ">
-      <div class="col-lg-8 mx-auto">
+      <div class="col-lg-10 mx-auto">
         <section class="card p-3">
+
+          <!--Form-->
           <form id="form_zone" class="needs-validation" enctype="multipart/form-data">
-
-            <div class="card border-light p-3 m-1" style="height: 200px;">
-
+            <!--Drop files seccion-->
+            <div id="carddrop" class="card border-light p-3 m-1" style="height: 200px;">
               <div id="drop_zone" ondrop="dropHandler(event);" ondragover="dragOverHandler(event);">
-                <div class="card" style="display: flex; justify-content: center; text-align: center; height: 100%; background-color: transparent;">
-                  Arrastra y suelta uno o más archivos a esta zona ...
+                <div class="card" style="display: flex; justify-content: center; text-align: center; height: 100%; background-color: transparent; font-family: poppins1; font-size: 20px;">
+                  Arrastra y suelta uno o más archivos a esta zona o ...
                   <i class="fas fa-cloud-download-alt pt-2" style="font-size: 100px;"></i>
                 </div>
               </div>
-
             </div>
-            <div class="card border-light p-3 m-1 text-center">
-              <label for="basic-url">o Seleccione los archivos pulsando el boton (Maximo 5): </label>
+            <!--Select files seccion-->
+            <div class="card border-light p-3 m-1 text-center" style="font-family: poppins1;">
+              <label id="label1" for="basic-url">Seleccione los archivos pulsando el boton (Maximo 5): </label>
               <div class="input-group ">
                 <div class="input-group-prepend">
                   <span class="input-group-text"><i class="far fa-file-pdf"></i></span>
@@ -51,56 +46,54 @@
                 </div>
               </div>
             </div>
-            <div id="list_zone" class="card border-light p-3 m-1"">
-              <table class="table">
-                <thead>
-                  <tr>
+            <!--list table file seccion-->
+            <div id="list_zone" class="card border-light p-3 m-1" style="overflow-x: scroll;">
+              <table class="table" style="min-width: 500px; margin-bottom: 0rem;">
+                <thead >
+                  <tr >
                     <th scope="col">#</th>
-                    <th scope="col">File</th>
-                    <th scope="col">Pages</th>
-                    <th scope="col">Qty</th>
+                    <th id="namefield" scope="col" >Archivo</th>
+                    <th scope="col">Pag.</th>
+                    <th scope="col">Copias</th>
                   </tr>
                 </thead>
-                <tbody id="table_zone">
-                  <!--
-                  <tr>
-                    <th scope="row">1</th>
-                    <td>Mark</td>
-                    <td>Otto</td>
-                  </tr>
-                  -->
-                </tbody>
+                <tbody id="table_zone" style="font-size: 15px;"><!--Here are files list--></tbody>
               </table>
             </div>
-            <div class="card border-light p-3 m-1">
-              <button class="btn btn-outline-light btn-block btn-lg" type="submit">Generate code</button>
+            <!--Button seccion-->
+            <div class="card border-light p-3 m-1" style="font-size: 16px;">
+              <button class="btn btn-outline-light btn-block btn-lg" type="submit">
+                Generar codigo <i class="far fa-keyboard pl-2"></i>
+              </button>
             </div>
-
           </form>
+
+
         </section>
       </div>
     </div>
   </section>
-
+  <!--Only modal-->
   <section id="modal_zone" class="modal fade"  tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered" role="document">
       <div class="modal-content">
       </div>
     </div>
   </section>
-
-
 </body>
+<!--Call JS scrips-->
 <script src="/js/bootstrap-native-v4.min.js"></script>
 <script src="/js/pdf-lib.min.js"></script>
 <script>
 
-  
-  var myfiles = [];
-  var modal_zone = new Modal(document.getElementById('modal_zone'));
+  //------------------------------------- Create variables -------------------------------------//
+  var myfiles = [];                                                   //init empty array for storage tmp files
+  var modal_zone = new Modal(document.getElementById('modal_zone'));  //init modal with bootstrap native
+  var PDFDocument = PDFLib.PDFDocument;                               //Init object for manage pdfs
 
-  var PDFDocument = PDFLib.PDFDocument;
-  async function readfile2(file) {
+  //------------------------------------- Functions -------------------------------------//
+
+  async function readfile2(file) {                                    //This fcn convert an object file in a array of bytes
     return new Promise((resolve, reject) => {
       const reader = new FileReader();
       reader.onload = () => resolve(reader.result);
@@ -108,13 +101,13 @@
       reader.readAsArrayBuffer(file);
     });
   }
-  async function getnumpages2(file) {
+  async function getnumpages2(file) {                                 //This fcn return int pages from pdf files in format array of bytes
     const arrayBuffer = await readfile2(file);
     const pdf = await PDFDocument.load(arrayBuffer);
     return pdf.getPages().length;
   }
 
-  function callmodal(par1,par2) {
+  function callmodal(par1,par2) {                                     //This fcn init a modal with new content using bootstrap native
     modal_zone = new Modal(document.getElementById('modal_zone'));
     let modal_str = "";
     let btn_str = "";
@@ -131,7 +124,7 @@
           <span aria-hidden="true">&times;</span>\
         </button>\
       </div>\
-      <div class="modal-body">'+ par1 +'</div>\
+      <div class="modal-body text-center" style="font-size: 18px">'+ par1 +'</div>\
       <div class="modal-footer">' + btn_str +' </div>';
     modal_zone.update();
     modal_zone.setContent(modal_str);
@@ -139,13 +132,13 @@
     return null;
   }
 
-  function dragOverHandler(ev) {
+  function dragOverHandler(ev) {                                      //This fcn prevent that page refresh when user drag files in dropzone
     document.getElementById('drop_zone').style.backgroundColor = "white";
     document.getElementById('drop_zone').style.color = "rgb(48,48,48)"
     ev.preventDefault();
   }
 
-  function removeDragData(ev) {
+  function removeDragData(ev) {                                       //This fcn not use
     console.log('Removing drag data')
     if (ev.dataTransfer.items) {
       // Use DataTransferItemList interface to remove the drag data
@@ -156,29 +149,44 @@
     }
   }
 
-  function dropHandler(ev) {
+  async function dropHandler(ev) {                                    //This fcn process each file drop in dropzone for generate a table
     
     ev.preventDefault();
     myfiles = [];
     let tablestring = "";
-
-    if ((ev.dataTransfer.items) && (ev.dataTransfer.items.length <= 5)) {
-      for (let i = 0; i < ev.dataTransfer.items.length; i++) {
+    let allfiles = ev.dataTransfer.items.length;
+    if ((ev.dataTransfer.items) && (allfiles <= 5)) {
+      for (let i = 0; i < allfiles; i++) {
         if (ev.dataTransfer.items[i].kind === 'file') {
           let file = ev.dataTransfer.items[i].getAsFile();
-          console.log(file);
+          //console.log(file);
           if(file.type == 'application/pdf'){
             if(file.size < 5500000 ){
               myfiles.push(file);
               //console.log('... file[' + i + '].name = ' + file.name);
-              tablestring += '\
-                <tr>\
-                  <th scope="row" style="width: 20%;">'+ (i+1) +'</th>\
-                  <td style="width: 50%;">'+ file.name +'</td>\
-                  <td style="width: 20%;"><input type="number" class="form-control text-right" min="1" value="1" id="copy'+i+'"></td>\
-                </tr>';
+              tablestring += `
+                <tr>
+                  <th scope="row"> ${(i+1)} </th>
+                  <td>${file.name}</td>
+                  <td id="page${i}">1</td>
+                  <td style="padding: 0.25rem;">
+                    <div class="input-group" style="width: 125px;">
+                      <div class="input-group-prepend">
+                        <button class="btn btn-outline-success" type="button" id="btn_p${i}" onclick="addsub(event);">
+                          <i id="btn_p${i}" class="fas fa-plus-circle"></i>
+                        </button>
+                      </div>
+                      <input type="number" class="form-control text-right" min="1" value="1" id="copy${i}">
+                      <div class="input-group-append">
+                        <button class="btn btn-outline-danger" type="button" id="btn_m${i}" onclick="addsub(event);">
+                          <i id="btn_m${i}" class="fas fa-minus-circle"></i>
+                        </button>
+                      </div>
+                    </div>
+                  </td>
+                </tr>`;
             }else{
-              i = ev.dataTransfer.items.length;
+              i = allfiles;
               myfiles = [];
               tablestring = "";
               callmodal('Un archivo supera los 5 Megas',false);
@@ -192,27 +200,65 @@
           }
         }
       }
+      document.getElementById('table_zone').innerHTML = tablestring;
+      
+      for (let i = 0; i < allfiles; i++) {
+        const numPages = await getnumpages2(myfiles[i]);
+        document.getElementById('page'+i).innerText = numPages;
+      }
+
     } else {
       myfiles = [];
       tablestring = "";
       callmodal('No exceda los 5 archivos',false);
+      document.getElementById('table_zone').innerHTML = tablestring;
       /*for (let i = 0; i < ev.dataTransfer.files.length; i++) {
         console.log('... file[' + i + '].name = ' + ev.dataTransfer.files[i].name);
       }*/
     } 
-    document.getElementById('table_zone').innerHTML = tablestring;
+    
     document.getElementById('drop_zone').style.backgroundColor = "gray";
     document.getElementById('drop_zone').style.color = "white";
     // Pass event to removeDragData for cleanup
     //removeDragData(ev);
   }
+  
+  function addsub(ev) {                                               //This fcn add or substract counter copy
+    let btnid = ev.srcElement.id;
+    let type = btnid.slice(4,5);
+    btnid = btnid.slice(5,6);
+    const copyi = document.getElementById("copy"+btnid);
+    
+    if(type == "p"){
+      if(parseInt(copyi.value)<10){
+        copyi.value++;
+      }
+    }else if(type == "m"){
+      if(parseInt(copyi.value)>1){
+        copyi.value--;
+      }
+    }
+    
+  }
 
-  document.getElementById('drop_zone').addEventListener('dragleave',function (e) {
+  //------------------------------------- Inicialize -------------------------------------//
+
+  const namefield = document.getElementById('namefield');             //This process change widht namefiled table
+  const limitw = parseInt(document.getElementById('form_zone').clientWidth);
+  if(limitw > 800){
+    namefield.style.width = (limitw - 300) + "px"
+  }else{
+    namefield.style.width = (limitw + 300) + "px"
+  }
+
+  //------------------------------------- Even listeners -------------------------------------//
+
+  document.getElementById('drop_zone').addEventListener('dragleave',function (e) {     //This event return normal color in dropzone
     document.getElementById('drop_zone').style.backgroundColor = "gray";
     document.getElementById('drop_zone').style.color = "white";
   });
 
-  document.getElementById('seld_zone').addEventListener('change',async function (e) {
+  document.getElementById('seld_zone').addEventListener('change',async function (e) {   //This event make a table with each file load with button load file
     //console.log(e);
     let tablestring = "";
     myfiles = [];
@@ -222,13 +268,27 @@
           const numPages = await getnumpages2(e.srcElement.files[i]);
           if(e.srcElement.files[i].size < 5500000 ){
             myfiles.push(e.srcElement.files[i]);
-            tablestring += '\
-              <tr>\
-                <th scope="row" style="width: 15%;">'+ (i+1) +'</th>\
-                <td style="width: 50%;">'+ e.srcElement.files[i].name +'</td>\
-                <td style="width: 15%;">'+ numPages +'</td>\
-                <td style="width: 15%;"><input type="number" class="form-control text-right" min="0" value="1" id="copy'+i+'"></td>\
-              </tr>';
+            tablestring += `
+              <tr>
+                <th scope="row"> ${(i+1)} </th>
+                <td>${e.srcElement.files[i].name}</td>
+                <td id="page${i}">${numPages}</td>
+                <td style="padding: 0.25rem;">
+                  <div class="input-group" style="width: 125px;">
+                    <div class="input-group-prepend">
+                      <button class="btn btn-outline-success" type="button" id="btn_p${i}" onclick="addsub(event);">
+                        <i id="btn_p${i}" class="fas fa-plus-circle"></i>
+                      </button>
+                    </div>
+                    <input type="number" class="form-control text-right" min="1" value="1" id="copy${i}">
+                    <div class="input-group-append">
+                      <button class="btn btn-outline-danger" type="button" id="btn_m${i}" onclick="addsub(event);">
+                        <i id="btn_m${i}" class="fas fa-minus-circle"></i>
+                      </button>
+                    </div>
+                  </div>
+                </td>
+              </tr>`;
           }else{
             i = e.srcElement.files.length;
             myfiles = [];
@@ -252,8 +312,8 @@
 
   });
 
-  document.getElementById('form_zone').addEventListener('submit',async function (e) {
-    e.preventDefault();
+  document.getElementById('form_zone').addEventListener('submit',async function (e) {       //This event send all valid files to backend, prevously the backend storage files in firebase storage
+    e.preventDefault();                                                                     
     if((myfiles.length < 5)&&(myfiles.length > 0)){
 
       const formData = new FormData();
@@ -277,7 +337,7 @@
               const message = '\
                 <div>\
                   <span>Sus archivos ya estan en el cajero, utilize la clave: </span>\
-                  <span class="font-italic"><a href="#"> '+ res['clave'] +' <a/></span> \
+                  <span class="font-italic" style="font-size: 24px;"><a href="#"> '+ res['clave'] +' <a/></span> \
                   <span> para acceder a ellos </span>\
                 </div>'
               callmodal(message,true);

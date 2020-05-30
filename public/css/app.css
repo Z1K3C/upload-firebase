@@ -1,0 +1,50 @@
+  @font-face {
+    font-family: 'yanone1';
+    src: url('/font/yanone.ttf');
+  }
+  @font-face {
+    font-family: 'poppins1';
+    src: url('/font/poppins.ttf');
+  }
+  #drop_zone {
+    height: 100%;
+    width: 100%;
+    background-color: gray;
+  }
+  #label1{
+    font-size: 18px;
+  }
+  #list_zone thead{
+    font-size: 18px;
+  }
+
+  @media screen and (max-width: 780px) {
+    #carddrop {
+      display: none;
+    }
+    #label1 {
+      font-size: 14px;
+    }
+    #list_zone thead{
+      font-size: 14px;
+    }
+  }
+
+  ::-webkit-scrollbar {
+    width: 10px;
+  }
+  ::-webkit-scrollbar-track {
+    background: rgb(48,48,48);
+  }
+  ::-webkit-scrollbar-thumb {
+    background: rgb(34,34,34);
+  }
+  ::-webkit-scrollbar-thumb:hover {
+    background: rgb(5,200,200);
+  }
+
+  input[type=number]::-webkit-inner-spin-button, 
+  input[type=number]::-webkit-outer-spin-button { 
+    -webkit-appearance: none; 
+    margin: 0; 
+  }
